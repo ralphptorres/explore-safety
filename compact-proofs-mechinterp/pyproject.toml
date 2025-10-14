@@ -1,0 +1,26 @@
+[project]
+name = "compact-proofs-mechinterp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "basedpyright>=1.32.1",
+    "einops>=0.8.1",
+    "jaxtyping>=0.3.3",
+    "marimo>=0.17.2",
+    "matplotlib>=3.10.7",
+    "torch>=2.9.0",
+    "tqdm>=4.67.1",
+    "ty>=0.0.1a24",
+    "watchdog>=6.0.0",
+]
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu" }]
+torchvision = [{ index = "pytorch-cpu" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
