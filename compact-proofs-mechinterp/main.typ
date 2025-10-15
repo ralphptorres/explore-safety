@@ -269,3 +269,64 @@ Now we can come to the second part P2 of our proof -- actually computing the
 quantity.
 
 refer: `main.py > def symmetry_proof_loss()`
+
+== Convexity proof
+
+So far our proofs didn't involve any proper bounds. We will now start using more
+coarse bounds, but this will lead to a great increase in compression. The
+central notion for this section is *convexity*.
+
+Definition:
+- A function $f : RR^n -> RR$ is convex, if $forall x,y in RR^n$ and
+  $t in [0,1]$, we have an inequality
+  $
+    f(t x + (1 - t) y) <= t f(x) + (1 - t) f(y).
+  $
+- A function $f : RR^n -> RR^m$ is convex, if all the projections
+  $f_1, ..., f_m : RR^n -> RR^m -->^(p r_i) RR$ are convex.
+
+=== 1. Proving that $L compose g_theta (v)$ is convex:
+
+First we prove this general statement:
+
+Lemma: Let $f_1 : RR^n -> RR^m$ and $f_2 : RR^m -> RR^k$ be a linear and a
+convex function respectively, then $f_2 compose f_1 : RR^n -> RR^k$ is convex as
+well.
+
+*Proof*
+
+This follows from the following inequalities
+$
+  f_2 (f_1 (t dot x + (1-t) dot y))
+  = f_2 (t dot f_1 (x) + (1-t) dot f_1 (y))
+  <= t dot f_2 (f_1 (x)) + (1-t) dot f_2(f_1 (y))
+$
+where the first equality follows from linearity of $f_1$ and the second one from
+convexity of $f_2$.
+
+Now we will combine the above statement with the following lemma.
+
+Lemma: $g_theta (v)$ is linear and $L(-,x)$ is convex.
+
+*Proof*
+
+- $g_theta (v)$ is a composition of linear functions, therefore also linear.
+
+- There are several ways to prove that $L$ is convex. One could verify that the
+  Hessian of $L$ is positive semi-definite or directly apply the Hölderlin
+  inequality. Let's use the latter approach. Our goal is to show that for
+  $x in RR^m$ we have the following function is convex
+  $
+    - log(e^(x_i) / (sum^m_(j=1) e^(x_j)))
+  $
+  where we fixed an $i in {1, ..., m}$ (corresponding to the correct label). We
+  can rewrite the function as
+  $
+    - x_i + log(sum^m_(j=1) e^(x_j))
+  $
+  and it suffices to show that $log(sum^m_(j=1) e^(x_j))$ is convex. This
+  follows from the Hölderlin inequality
+  $
+    sum e^(t dot x_i) e^((1-t) dot y_i)
+    <= (sum e^(x_i))^t dot (sum e^(y_i))^(1-t).
+  $
