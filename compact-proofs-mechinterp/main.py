@@ -202,7 +202,6 @@ def brute_force_loss_proof(model, params):
         model.eval()
 
         for x in tqdm(range(0, params.d_vocab)):
-
             x_tensor = t.tensor([x] * (params.d_vocab))
             y_tensor = t.tensor([i for i in range(params.d_vocab)])
 
@@ -235,8 +234,52 @@ def _(loss_bf, performance, time_bf):
     return
 
 
+@app.function
+@measure_time
+def symmetry_proof_loss(model, params):
+    loss = 0
+    criterion = t.nn.CrossEntropyLoss()
+
+    with t.no_grad():
+        model.eval()
+        for x in tqdm(range(0, params.d_vocab - 1)):
+            x_tensor = t.tensor([x] * (params.d_vocab - x - 1))
+            y_tensor = t.tensor([x + i + 1 for i in range(params.d_vocab - x - 1)])
+
+            labels = t.max(x_tensor, y_tensor)
+            inputs = t.stack(
+                [
+                    F.one_hot(x_tensor, num_classes=params.d_vocab).float(),
+                    F.one_hot(y_tensor, num_classes=params.d_vocab).float(),
+                ],
+                dim=1,
+            )
+
+            outputs = model(inputs)
+
+            loss += criterion(outputs, labels) * 2 * len(x_tensor)
+
+        x_tensor = t.eye(params.d_vocab)
+        inputs = t.stack([x_tensor] * 2, dim=1)
+
+        outputs = model(inputs)
+
+        loss += criterion(outputs, t.tensor([i for i in range(params.d_vocab)])) * len(
+            x_tensor
+        )
+
+    return loss / (params.d_vocab * params.d_vocab)
+
+
 @app.cell
-def _():
+def _(model, params):
+    loss_sym, time_sym = symmetry_proof_loss(model=model, params=params)
+    return loss_sym, time_sym
+
+
+@app.cell
+def _(loss_sym, performance, time_sym):
+    performance.append((loss_sym, time_sym))
     return
 
 
