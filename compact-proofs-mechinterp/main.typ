@@ -214,3 +214,58 @@ Lean or Coq. For a more serious use case this would be indeed necessary, but for
 now I will leave it open to the you, the reader, to formalize the proof that you
 would want to be verified. Generally speaking, be aware though that Lean and Coq
 also have bugs!
+
+== Symmetry proof
+
+Our brute force proof gave the optimal bound, but at the cost of having to
+compute all the inputs. Can we do better? Yes!
+
+We start with the first part P1 of our proof. It will be based on the following
+observation
+
+Lemma: Let $f_theta (t_1, t_2)$ denote the neural network as depicted above.
+Then
+$
+  f_theta (t_1,t_2) = f_theta (t_2,t_1).
+$
+
+Try to prove that statement!
+
+*Proof*
+
+This is a consequence of the following equalities
+$
+  f_theta (t_1, t_2)
+  = g_theta (t_1 dot E + t_2 dot E)
+  = g_theta (t_2 dot E + t_1 dot E)
+  = f_theta (t_1, t_2).
+$
+
+Now you can use that statement to prove the following statement.
+
+Theorem: The expected loss of a model $M$ with weights $theta$ is bounded by
+(and in fact equal to)
+$
+  1 / d_"vocab"^2 dot [
+    sum_(t_1 < t_2) 2 dot f_theta (t_1, t_2) + sum_(t_1) f_theta (t_1, t_1)
+  ].
+$
+
+*Proof*
+
+This is a consequence of the following equality
+$
+  sum_(t_1, t_2) f_theta (t_1, t_2)
+  &= sum_(t_1 < t_2) f_theta (t_1, t_2)
+  + sum_(t_1) f_theta (t_1, t_1)
+  + sum_(t_1 > t_2) f_theta (t_1, t_2) \
+  &= sum_(t_1 < t_2) f_theta (t_1, t_2)
+  + sum_(t_1) f_theta (t_1, t_1)
+  + sum_(t_2 < t_1) f_theta (t_2, t_1) \
+  &= sum_(t_1 < t_2) 2 dot f_theta (t_1, t_2) + sum_(t_1) f_theta (t_1, t_1).
+$
+
+Now we can come to the second part P2 of our proof -- actually computing the
+quantity.
+
+refer: `main.py > def symmetry_proof_loss()`
