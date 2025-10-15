@@ -151,7 +151,7 @@ def _():
     params = Parameters()
     performance = []
     train_data = TrainingDataMax(params=Parameters)
-    return (params,)
+    return params, performance
 
 
 @app.cell
@@ -159,7 +159,7 @@ def _(params):
     model = MLP(params=Parameters)
     model = MLP(params=params)
     loss_history = train(model=model, params=params)
-    return (loss_history,)
+    return loss_history, model
 
 
 @app.cell
@@ -177,6 +177,61 @@ def _(loss_history):
 @app.cell
 def _(loss_history):
     loss_history[-5:]
+    return
+
+
+@app.function
+def brute_force_loss(model, params: Parameters) -> Float:
+    """Computes the loss for every possible input and returns the average of the sum of the losses"""
+
+    loss = 0
+    criterion = t.nn.CrossEntropyLoss()
+
+    # TODO
+
+    pass
+
+
+@app.function
+@measure_time
+def brute_force_loss_proof(model, params):
+    loss = 0
+    criterion = t.nn.CrossEntropyLoss()
+
+    with t.no_grad():
+        model.eval()
+
+        for x in tqdm(range(0, params.d_vocab)):
+
+            x_tensor = t.tensor([x] * (params.d_vocab))
+            y_tensor = t.tensor([i for i in range(params.d_vocab)])
+
+            labels = t.max(x_tensor, y_tensor)
+
+            inputs = t.stack(
+                [
+                    F.one_hot(x_tensor, num_classes=params.d_vocab).float(),
+                    F.one_hot(y_tensor, num_classes=params.d_vocab).float(),
+                ],
+                dim=1,
+            )
+
+            outputs = model(inputs)
+
+            loss += criterion(outputs, labels)
+
+    return loss / params.d_vocab
+
+
+@app.cell
+def _(model, params):
+    loss_bf, time_bf = brute_force_loss_proof(model=model, params=params)
+    return loss_bf, time_bf
+
+
+@app.cell
+def _(loss_bf, performance, time_bf):
+    performance.append((loss_bf, time_bf))
     return
 
 
