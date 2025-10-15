@@ -148,3 +148,42 @@ Having worked through the high level picture, let us now focus on concrete
 examples of compact proofs and explain what it means. Let's say we have a model:
 
 #image("fig/model-2.png")
+
+refer: `main.py > class MLP()`
+
+In our first example, we will train the model to predict the max of the two
+tokens, where the tokens range from $0$ to $d_"vocab"$. We will be interested in
+estimating the global loss of this model, that is we want to estimate
+$
+  EE [f(t_1, t_2)]
+  = 1 / d_"vocab"^2 dot sum_(t_1, t_2 in {0, ..., d_"vocab" - 1 }) f(t_1, t_2).
+$
+
+The general proof strategy consists of two steps:
++ P1: Prove a statement that given a model with its weights $theta$, there is a
+  quantity $C(theta)$ such that $EE [h(x, M(x))] <= C(theta)$.
++ P2: Compute the quantity $C(theta)$.
+
+We will come back to this after we did some proofs and also discuss what it
+means to have a *compact* proof.
+
+We train our model on $~10%$ of the whole data set. (This is not correct,
+dataset is random each batch)
+
+refer: `main.py > params = Parameters() ...`
+
+#image("fig/loss-1.svg")
+
+Note that this is our *training set* loss.
+
+refer: `main.py > loss_history[-5:]`
+
+```
+[
+  0.2482442557811737,
+  0.23066267371177673,
+  0.21940861642360687,
+  0.26723822951316833,
+  0.218377023935318
+]
+```
