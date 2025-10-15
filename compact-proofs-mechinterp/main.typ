@@ -411,3 +411,11 @@ slightly different set up, where our convex proof will yield useful results.
 After that we are ready to dig into the proofs of the paper and replicate some
 of them. These will turn out to be more difficult, but will also make use of
 more serious mechanistic machinery.
+
+= Making convex work for $n = 3$
+
+TODO
+
+= Implementing the cubic proof
+
+TODO
