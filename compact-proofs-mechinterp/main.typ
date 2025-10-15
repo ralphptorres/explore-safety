@@ -367,3 +367,47 @@ Combining the previous two statements yield the desired statement.
 Now we come to the part P2 of our proof -- computing the above quantity.
 
 refer: `main.py > convexity_proof()`
+
+== Summary
+
+refer: `main.py > x = [performance[][] ...]`
+
+#image("fig/proofs-loss.svg", width: 8em)
+
+Let's break down what we see. On the $x$-axis we have the time it took to run
+the proofs. This is a proxy for the compactness of the proof. Another related
+notion would be to track the FLOPS needed to run the proof. We see that the
+symmetric proof takes about half of the time compared to the brute force one.
+This makes sense:
+
+There is a total of $d^2$ inputs that the brute force proof needs. On the other
+hand the symmetric proof needs only $(d(d+1)) / 2$ inputs. But note that our
+architecture was very simple -- we can't expect such an easy improvement in
+general. Note also that asymptotically both proofs scale *quadratic* in $d$.
+
+On the other hand the convex proof scales only *linearly* in $d$. This is great,
+but it comes at a great cost: Our bound is very bad and we find ourselves on the
+other end of trade off, close to a vacuous proof. In fact, there is a straight
+forward explanation why our bound will always be comparatively coarse. Can you
+figure out why?
+
+*The reason...*
+
+...that we should expect a very coarse bound in the expression
+$
+  [ sum_(t_1) L(g_theta (t_1, t_1), t_1)
+    + sum_(t_1 < t_2) L(g_theta (t_1, t_1), t_2)
+    + L(g_theta(t_2, t_2), t_2)
+  ].
+$
+is the middle term $L(g_theta (t_1, t_1), t_2)$. This term computes the
+cross-entropy loss *not* between $ell_[t_1, t_1]$ and $t_1 = max([t_1, t_1])$,
+but between $ell_[t_1, t_1]}$ and $t_2$. Thus even if our model would perform
+optimally, this term would remain high.
+
+
+This concludes the first example! In the next section, we will explore a
+slightly different set up, where our convex proof will yield useful results.
+After that we are ready to dig into the proofs of the paper and replicate some
+of them. These will turn out to be more difficult, but will also make use of
+more serious mechanistic machinery.
