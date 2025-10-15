@@ -187,3 +187,30 @@ refer: `main.py > loss_history[-5:]`
   0.218377023935318
 ]
 ```
+
+== Brute force proof
+
+Let's start proving things now! One thing we can do is a brute force proof.
+Remember that our proofs will consist of two steps. The first step (P1) is as
+follows
+
+Theorem(Brute force proof): The expected loss of a model $M$ with weights
+$theta$ is bounded above by $EE [f(t_1, t_2)]$.
+
+Proof: By definition the bound is actually an equality.
+
+
+That was an easy proof, but the ones we will encounter from now on will be more
+difficult and feel less tautological! Now we come to the second part of the
+proof (P2), which in this case means computing this quantity.
+
+refer: `main.py > def brute_force()`
+
+*A word on the "formal" in "formal proofs"*
+
+Strictly speaking we would want to formalize our proofs, meaning that we would
+rewrite them in a form that can be verified by a formal proof assistant such as
+Lean or Coq. For a more serious use case this would be indeed necessary, but for
+now I will leave it open to the you, the reader, to formalize the proof that you
+would want to be verified. Generally speaking, be aware though that Lean and Coq
+also have bugs!
