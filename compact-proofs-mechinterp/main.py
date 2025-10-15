@@ -17,7 +17,6 @@ with app.setup:
     from typing import Optional, Callable, Union, List, Tuple
     import copy
     from tqdm import tqdm
-    # from IPython.display import Image
 
 
 @app.class_definition
@@ -75,11 +74,6 @@ class TrainingDataMax(Dataset):
         return self.n**self.n_ctx
 
 
-params = Parameters()
-performance = []
-train_data = TrainingDataMax(params=Parameters)
-
-
 @app.function
 def training_step(
     model,
@@ -133,6 +127,57 @@ def train(model, params):
             loss_history.append(loss.detach().item())
 
     return loss_history
+
+
+@app.class_definition
+class MLP(t.nn.Module):
+    def __init__(self, params):
+        super().__init__()
+        self.n_ctx = params.n_ctx
+
+        self.embedding = t.nn.Linear(params.d_vocab, params.d_model, bias=False)
+        self.linear = t.nn.Linear(params.d_model, params.d_model, bias=False)
+        self.unembedding = t.nn.Linear(params.d_model, params.d_vocab, bias=False)
+
+    def g(self, x):
+        return self.unembedding((self.linear(x)))
+
+    def forward(self, a):
+        return self.g(self.embedding(a.sum(dim=1)))
+
+
+@app.cell
+def _():
+    params = Parameters()
+    performance = []
+    train_data = TrainingDataMax(params=Parameters)
+    return (params,)
+
+
+@app.cell
+def _(params):
+    model = MLP(params=Parameters)
+    model = MLP(params=params)
+    loss_history = train(model=model, params=params)
+    return (loss_history,)
+
+
+@app.cell
+def _(loss_history):
+    plt.plot(loss_history)
+    plt.title("Loss Curve")
+    plt.xlabel("Batch")
+    plt.ylabel("Loss")
+    plt.grid(True)
+    plt.savefig("fig/loss-1.svg")
+    plt.show()
+    return
+
+
+@app.cell
+def _(loss_history):
+    loss_history[-5:]
+    return
 
 
 @app.cell
