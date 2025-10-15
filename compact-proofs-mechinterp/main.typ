@@ -109,3 +109,36 @@ for the model's computation, but we simply don't understand it. This issue with
 the noise is another point that a quantative evaluation should be able to
 address.
 
+== What are compact proofs?
+
+Compact proofs are an attempt at formalizing the above diagram.
+
+First of all, what do we mean by proof i.e. what are we trying to prove? Say we
+are training a model with weights $theta$ on some task. The kinda of statements
+that we want to prove are of the form
+$
+  EE [f_theta (x)] >= b
+$
+where $f_theta$ is a quantity that we are interested in bounding from below or
+above (depending on the quantity), such as loss or accuracy.
+
+The compactness of a proof is determined by its length. A good proxy for the
+length is the FLOPS required to run the proof, see the #link(
+  "https://arxiv.org/pdf/2406.11779",
+)[paper] for more details. (Maybe I will write more on this)
+
+So once we have a proof, we can measure its correspondence by looking at the
+bound and measure its compactness by measuring its length. We get a similar
+picture to the one drawn above:
+
+#image("fig/compact_proofs.png")
+
+We will see many examples of proofs and compare their performance below. The
+ideal goal here would be to have a pipeline that takes in a vague interpretation
+of the model, turn that into a rigorous proof, and evaluate the interpretation
+based on the correspondence and compactness of the proof.
+
+As we will see below this turns out to be rather difficult, even in toy models.
+The takeaway here is that quantification seems to be a hard problem and the
+compact proof approach is an example of this.
+
