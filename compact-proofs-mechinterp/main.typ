@@ -142,3 +142,9 @@ As we will see below this turns out to be rather difficult, even in toy models.
 The takeaway here is that quantification seems to be a hard problem and the
 compact proof approach is an example of this.
 
+= Max-of-2 example
+
+Having worked through the high level picture, let us now focus on concrete
+examples of compact proofs and explain what it means. Let's say we have a model:
+
+#image("fig/model-2.png")
