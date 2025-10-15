@@ -372,7 +372,7 @@ refer: `main.py > convexity_proof()`
 
 refer: `main.py > x = [performance[][] ...]`
 
-#image("fig/proofs-loss.svg", width: 8em)
+#image("fig/proofs-loss.svg")
 
 Let's break down what we see. On the $x$-axis we have the time it took to run
 the proofs. This is a proxy for the compactness of the proof. Another related
