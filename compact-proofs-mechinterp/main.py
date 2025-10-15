@@ -283,5 +283,36 @@ def _(loss_sym, performance, time_sym):
     return
 
 
+@app.function
+@measure_time
+def convexity_proof(model, params):
+    loss = 0
+
+    with t.no_grad():
+        model.eval()
+
+        criterion = t.nn.CrossEntropyLoss()
+
+        inputs = t.stack([t.eye(params.d_vocab) * 2], dim=1)
+
+        logits = model(inputs)
+        print(logits.shape)
+
+        for i in tqdm(range(1, params.d_vocab)):
+            loss += (i + 1) * criterion(logits[: i + 1], t.tensor([i] * (i + 1)))
+
+        loss += params.d_vocab * criterion(
+            logits, t.tensor([i for i in range(params.d_vocab)])
+        )
+
+    return loss / (params.d_vocab**2)
+
+
+@app.cell
+def _(model, params, performance):
+    performance.append(convexity_proof(model=model, params=params))
+    return
+
+
 if __name__ == "__main__":
     app.run()
