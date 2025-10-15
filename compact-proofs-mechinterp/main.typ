@@ -330,3 +330,40 @@ Lemma: $g_theta (v)$ is linear and $L(-,x)$ is convex.
     sum e^(t dot x_i) e^((1-t) dot y_i)
     <= (sum e^(x_i))^t dot (sum e^(y_i))^(1-t).
   $
+
+
+=== 2. Proving a bound for $f_theta (t_1, t_2)$
+
+Theorem: The expected loss of a model $M$ with weights $theta$ is bounded above
+by
+$
+  1 / d_"vocab"^2 dot [
+    sum_(t_1) L(g_theta (t_1, t_1), t_1)
+    + sum_(t_1 < t_2) L(g_theta (t_1, t_1), t_2) + L(g_theta (t_2, t_2), t_2)
+  ].
+$
+
+Note that we can rewrite the first and last term as $f_theta (t_1, t_1)$ and
+$f_theta(t_2, t_2)$ respectively, but we can't rewrite the middle term in terms
+of $f_theta$ (Why?).
+
+*Proof*
+
+From the symmetric proof section we have seen that expected loss is equal to
+$
+  1 / d_"vocab"^2 dot [ sum_(t_1) f_theta (t_1, t_1) + sum_(t_1 < t_2) 2 dot f_theta (t_1, t_2) ].
+$
+
+From the previous lemma we have seen, given $t_2 > t_1$, that
+$
+  f_theta (t_1, t_2)
+  = L(g_theta (t_1 dot E + t_2 dot E), t_2)
+  <= 1 / 2 dot L(g_theta (2 dot t_1 dot E), t_2)
+  + 1 / 2 dot L(g_theta (2 dot t_2 dot E), t_2)
+$.
+
+Combining the previous two statements yield the desired statement.
+
+Now we come to the part P2 of our proof -- computing the above quantity.
+
+refer: `main.py > convexity_proof()`
