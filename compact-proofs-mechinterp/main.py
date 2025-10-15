@@ -314,5 +314,34 @@ def _(model, params, performance):
     return
 
 
+@app.cell
+def _(performance):
+    x = [performance[i][1] for i in range(3)]
+    y = [performance[i][0] for i in range(3)]
+    labels = ["Brute force", "Symmetric", "Convex"]
+    colors = ["red", "green", "blue"]
+
+    # Create plot
+    plt.scatter(x, y, c=colors)
+
+    for label, color in zip(labels, colors):
+        plt.plot(
+            [], [], marker="o", linestyle="", markersize=8, color=color, label=label
+        )
+
+    plt.legend(loc="center left", bbox_to_anchor=(1.05, 0.5))
+    plt.title("Different proof strategies to upper bound loss")
+    plt.xlabel("Time needed (in seconds)")
+    plt.ylabel("Loss estimate")
+    plt.savefig("fig/proofs-loss.svg")
+    plt.show()
+    return
+
+
+@app.cell
+def _():
+    return
+
+
 if __name__ == "__main__":
     app.run()
